@@ -14,7 +14,7 @@ const { generateHash, comparePasswords } = require('../../helper/password')
 
 exports.UserRegistration = async (req, res, next) => {
   try {
-    const { fullName, email, password, role, status } = req.body
+    const { fullName, email, passwords, role, status } = req.body
 
     const emailExist = await userService.isEmailExist(email)
     if (emailExist) {
@@ -24,7 +24,7 @@ exports.UserRegistration = async (req, res, next) => {
       )
     }
 
-    const hashedPassword = await generateHash(password)
+    const hashedPassword = await generateHash(passwords)
 
     const data = {
       fullName,
@@ -33,11 +33,13 @@ exports.UserRegistration = async (req, res, next) => {
       role,
       status,
     }
-    const mongoUserData = await userService.registerUser(data)
+    const user = await userService.registerUser(data)
+
+    const { password, ...others } = user._doc
     return responseUtil.successResponse(
       res,
       messageUtil.registration.success,
-      mongoUserData,
+      others,
     )
   } catch (ex) {
     responseUtil.serverErrorResponse(res, ex)

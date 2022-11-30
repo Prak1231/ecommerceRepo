@@ -104,7 +104,7 @@ const generateAccessTokens = async (req, res, next) => {
 const isAdminAuth = (req, res, next) => {
   verifyAuthToken(req, res, () => {
     if (req.user.role === 1) {
-      res.send('you are admin you can change')
+      next()
     } else {
       res.send('your are not admin')
     }

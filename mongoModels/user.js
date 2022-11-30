@@ -11,7 +11,9 @@ const userSchema = new Schema(
     email: {
       type: String,
     },
-    password: String,
+    password: {
+      type: String,
+    },
     role: {
       type: Number,
       enum: Object.values(config.DB_CONSTANTS.USERS.ROLE),

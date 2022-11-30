@@ -14,11 +14,11 @@ exports.findUser = async (email) => {
   return await User.findOne({ email: email })
 }
 exports.getUsersFromMongo = () => {
-  return User.find()
+  return User.find().select('-password')
 }
 
 exports.getUser = (id) => {
-  return User.findOne({ _id: id })
+  return User.findOne({ _id: id }).select('-password')
 }
 
 exports.updateUser = (id, data) => {

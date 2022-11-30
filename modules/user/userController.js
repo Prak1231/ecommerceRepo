@@ -6,10 +6,10 @@ const userService = require('./userService')
 
 exports.getUser = async (req, res, next) => {
   try {
-    const mongoUserData = await userService.getUser(req.params.id)
+    const user = await userService.getUser(req.params.id)
 
     responseUtil.successResponse(res, messageUtil.usersFetched, {
-      mongoUserData,
+      user,
     })
   } catch (ex) {
     responseUtil.serverErrorResponse(res, ex)
@@ -18,10 +18,10 @@ exports.getUser = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   try {
-    const mongoUserData = await userService.updateUser(req.params.id, req.body)
-
+    const user = await userService.updateUser(req.params.id, req.body)
+    const { password, ...others } = user._doc
     responseUtil.successResponse(res, messageUtil.usersFetched, {
-      mongoUserData,
+      others,
     })
   } catch (ex) {
     responseUtil.serverErrorResponse(res, ex)
@@ -30,7 +30,7 @@ exports.updateUser = async (req, res, next) => {
 
 exports.deleteUser = async (req, res, next) => {
   try {
-    const mongoUserData = await userService.deleteUser(req.params.id)
+    const user = await userService.deleteUser(req.params.id)
 
     responseUtil.successResponse(res, messageUtil.deleteUser)
   } catch (ex) {
@@ -41,10 +41,10 @@ exports.deleteUser = async (req, res, next) => {
 exports.getUsers = async (req, res, next) => {
   try {
     // const mysqlUserData = await userService.getUsersFromMysql();
-    const mongoUserData = await userService.getUsersFromMongo()
+    const users = await userService.getUsersFromMongo()
 
     responseUtil.successResponse(res, messageUtil.usersFetched, {
-      mongoUserData,
+      users,
     })
   } catch (ex) {
     responseUtil.serverErrorResponse(res, ex)
