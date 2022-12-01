@@ -15,7 +15,7 @@ const passport = require('passport')
 const passportConfig = require('./config/passportConfig')
 require('./mongoModels')
 
-const userRoutes = require('./routes/index')
+const routes = require('./routes/index')
 const loggerUtil = require('./helper/logger')
 const responseUtil = require('./helper/response')
 
@@ -48,7 +48,7 @@ app.use(passport.initialize())
 passportConfig.serializeUser()
 passportConfig.deserializeUser()
 passportConfig.configureStrategy()
-app.use('/v1', userRoutes)
+app.use('/v1', routes)
 
 app.use((req, res, next) => {
   responseUtil.notFoundErrorResponse(res, req)

@@ -17,4 +17,6 @@ module.exports = {
     dataNotFound: 'Please provide email id and password',
     success: 'Login Succesfull',
   },
+
+  deleteProduct: 'product deleted...',
 }

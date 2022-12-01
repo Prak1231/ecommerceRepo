@@ -19,6 +19,7 @@ exports.getUser = async (req, res, next) => {
 exports.updateUser = async (req, res, next) => {
   try {
     const user = await userService.updateUser(req.params.id, req.body)
+
     const { password, ...others } = user._doc
     responseUtil.successResponse(res, messageUtil.usersFetched, {
       others,

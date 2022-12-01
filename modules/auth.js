@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken')
-const User = require('../../mongoModels/user')
-const responseUtil = require('../../helper/response')
-const messageUtil = require('../../helper/message')
-const { generateAccessToken } = require('../../helper/authentication')
+const User = require('../mongoModels/user')
+const responseUtil = require('../helper/response')
+const messageUtil = require('../helper/message')
+const { generateAccessToken } = require('../helper/authentication')
 const verifyAuthToken = async (req, res, next) => {
   if (req.headers && req.headers.authorization) {
     const token = req.headers.authorization.split(' ')[1]

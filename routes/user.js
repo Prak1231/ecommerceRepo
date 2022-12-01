@@ -9,7 +9,7 @@ const {
   generateAccessTokens,
   isAdminAuth,
   verifyAuthToken,
-} = require('../modules/auth/auth')
+} = require('../modules/auth')
 
 const {
   getUsers,
