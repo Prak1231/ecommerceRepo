@@ -19,4 +19,5 @@ module.exports = {
   },
 
   deleteProduct: 'product deleted...',
+  deleteCategory: 'deleted successfully.....',
 }

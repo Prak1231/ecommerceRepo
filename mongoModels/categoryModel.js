@@ -5,39 +5,32 @@ const Schema = mongoose.Schema
 
 const config = require('../config')
 
-const productSchema = new Schema(
+const categorySchema = new Schema(
   {
-    productName: {
+    catName: {
       type: String,
       required: true,
     },
-    price: {
-      type: Number,
-      required: true,
-    },
+
     description: {
       type: String,
       required: true,
     },
+
     images: [
-       {
-        img: {type:String}
-       }
+      {
+        img: {
+          type: String,
+        },
+      },
     ],
 
-    offer: {
-      type: Number
-    },
-    category: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Category',
-      required: true,
-    },
     status: {
       type: String,
       enum: ['ACTIVE', 'INACTIVE'],
     },
   },
+
   {
     timestamps: {
       createdAt: 'created_at',
@@ -46,5 +39,5 @@ const productSchema = new Schema(
   },
 )
 
-const Product = mongoose.model('product', productSchema)
-module.exports = Product
+const Category = mongoose.model('Category', categorySchema)
+module.exports = Category

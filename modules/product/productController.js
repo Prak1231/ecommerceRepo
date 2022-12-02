@@ -3,14 +3,42 @@
 const messageUtil = require('../../helper/message')
 const responseUtil = require('../../helper/response')
 const productService = require('./productService')
+const categoryServices = require('../category/categoryServices')
 
 //create Product
 
 exports.addProduct = async (req, res, next) => {
   try {
-    req.body.user = req.user.id
-    console.log(req.user.id)
-    const product = await productService.addProduct(req.body)
+    // const file = '/uploads/' + req.file.filename
+
+    let images = []
+    if (req.files.length > 0) {
+      images = req.files.map((file) => {
+        return { img: file.filename }
+      })
+    }
+
+    console.log(images)
+    const {
+      productName,
+      price,
+      description,
+      offer,
+      category,
+      status,
+    } = req.body
+
+    const data = {
+      productName,
+      price,
+      description,
+      images,
+      offer,
+      category,
+      status,
+    }
+
+    const product = await productService.addProduct(data)
 
     responseUtil.successResponse(res, messageUtil.productFetched, {
       product,
@@ -20,6 +48,7 @@ exports.addProduct = async (req, res, next) => {
   }
 }
 
+//getProduct
 exports.getProduct = async (req, res, next) => {
   try {
     const product = await productService.getProduct(req.params.id)
@@ -32,18 +61,54 @@ exports.getProduct = async (req, res, next) => {
   }
 }
 
+//update product
 exports.updateProduct = async (req, res, next) => {
   try {
-    const product = await productService.updateProduct(req.params.id, req.body)
+    const product = await productService.getProduct(req.params.id)
+    console.log(product)
+    const oldImages = product.images
 
+    let newImages = []
+
+    if (req.files.length > 0) {
+      newImages = req.files.map((file) => {
+        return { img: file.filename }
+      })
+    }
+
+    const arr = [...oldImages, ...newImages]
+
+    const {
+      productName,
+      price,
+      description,
+      offer,
+      category,
+      status,
+    } = req.body
+
+    const data = {
+      productName,
+      price,
+      description,
+      images: arr,
+      offer,
+      category,
+      status,
+    }
+    const updatedProduct = await productService.updateProduct(
+      req.params.id,
+      data,
+    )
     responseUtil.successResponse(res, messageUtil.productFetched, {
-      product,
+      updatedProduct,
     })
   } catch (ex) {
     responseUtil.serverErrorResponse(res, ex)
   }
 }
 
+//delete product
 exports.deleteProduct = async (req, res, next) => {
   try {
     const product = await productService.deleteProduct(req.params.id)
@@ -54,22 +119,37 @@ exports.deleteProduct = async (req, res, next) => {
   }
 }
 
+//getProduct based on category
+
 exports.getProductsCat = async (req, res, next) => {
   try {
-    const category = req.query.category
+    const categoryName = req.query.category
 
-    let products
-    if (category) {
-      products = await productService.getProductCat(category)
-    } else {
-      products = await productService.getProducts()
+    const catName = new RegExp(['^', categoryName, '$'].join(''), 'i')
+
+    if (!categoryName) {
+      const products = await productService.getProducts()
+      return responseUtil.successResponse(res, messageUtil.usersFetched, {
+        products,
+      })
     }
 
-    const productsAvailable = `${products.length} products`
-    const result = { productsAvailable, products }
+    const category = await categoryServices.findCategoryByname(catName)
+    console.log(category)
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: 'No category found',
+      })
+    }
+
+    const cat_id = category._id.toString()
+
+    const products = await productService.getProductCat(cat_id)
 
     responseUtil.successResponse(res, messageUtil.usersFetched, {
-      result,
+      products,
     })
   } catch (ex) {
     responseUtil.serverErrorResponse(res, ex)

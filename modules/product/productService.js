@@ -2,26 +2,29 @@
 
 const Product = require('../../mongoModels/productModel')
 
-exports.addProduct = (data) => {
-  return Product.create(data)
+exports.addProduct = async (data) => {
+  return await Product.create(data)
 }
 
-exports.getProduct = (id) => {
-  return Product.findOne({ _id: id })
+exports.getProduct = async (id) => {
+  return await Product.findOne({ _id: id })
 }
 
-exports.updateProduct = (id, data) => {
-  return Product.findByIdAndUpdate(id, { $set: data }, { new: true })
+exports.updateProduct = async (id, data) => {
+  return await Product.findByIdAndUpdate(id, { $set: data }, { new: true })
 }
 
-exports.deleteProduct = (id) => {
-  return Product.findByIdAndRemove({ _id: id })
+exports.deleteProduct = async (id) => {
+  return await Product.findByIdAndRemove({ _id: id })
 }
 
-exports.getProductCat = (cat) => {
-  return Product.find({ category: cat })
+exports.getProductCat = async (cat) => {
+  return await Product.find({ category: cat }).populate(
+    'category',
+    'catName description',
+  )
 }
 
-exports.getProducts = () => {
-  return Product.find()
+exports.getProducts = async () => {
+  return await Product.find()
 }
