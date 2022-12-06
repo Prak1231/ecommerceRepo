@@ -17,29 +17,34 @@ exports.addToCart = async (req, res, next) => {
       })
 
       if (item) {
-        try {
-          const cart = await Cart.findOneAndUpdate(
-            {
-              userId,
-              'cartItems.productId': productId,
-            },
-            {
-              $set: {
-                'cartItems.$': {
-                  ...req.body.cartItems,
-                  quantity: item.quantity + req.body.cartItems.quantity,
-                  price:
-                    req.body.cartItems.price *
-                    (item.quantity + req.body.cartItems.quantity),
+        if (item.quantity < 10) {
+          console.log(item.quantity)
+          try {
+            const cart = await Cart.findOneAndUpdate(
+              {
+                userId,
+                'cartItems.productId': productId,
+              },
+              {
+                $set: {
+                  'cartItems.$': {
+                    ...req.body.cartItems,
+                    quantity: item.quantity + req.body.cartItems.quantity,
+                    price:
+                      req.body.cartItems.price *
+                      (item.quantity + req.body.cartItems.quantity),
+                  },
                 },
               },
-            },
-            { new: true },
-          )
+              { new: true },
+            )
 
-          return res.send(cart)
-        } catch (err) {
-          res.send(err)
+            return res.send(cart)
+          } catch (err) {
+            res.send(err)
+          }
+        } else {
+          res.send('you can not add more than 10 items')
         }
       } else {
         try {
@@ -86,26 +91,30 @@ exports.increaseQuantitycart = async (req, res, next) => {
         return item.productId == productId
       })
       if (item) {
-        const cart = await Cart.findOneAndUpdate(
-          {
-            userId,
-            'cartItems.productId': productId,
-          },
-          {
-            $set: {
-              'cartItems.$': {
-                ...req.body.cartItems,
-                quantity: item.quantity + req.body.cartItems.quantity,
-                price:
-                  req.body.cartItems.price *
-                  (item.quantity + req.body.cartItems.quantity),
+        if (item.quantity < 10) {
+          const cart = await Cart.findOneAndUpdate(
+            {
+              userId,
+              'cartItems.productId': productId,
+            },
+            {
+              $set: {
+                'cartItems.$': {
+                  ...req.body.cartItems,
+                  quantity: item.quantity + req.body.cartItems.quantity,
+                  price:
+                    req.body.cartItems.price *
+                    (item.quantity + req.body.cartItems.quantity),
+                },
               },
             },
-          },
-          { new: true },
-        )
+            { new: true },
+          )
 
-        res.send(cart)
+          res.send(cart)
+        } else {
+          res.send('you cant add more than 10 items')
+        }
       } else {
         res.send('no product found, please add product first')
       }
@@ -131,26 +140,41 @@ exports.deceaseQuantitycart = async (req, res, next) => {
         return item.productId == productId
       })
       if (item) {
-        const cart = await Cart.findOneAndUpdate(
-          {
-            userId,
-            'cartItems.productId': productId,
-          },
-          {
-            $set: {
-              'cartItems.$': {
-                ...req.body.cartItems,
-                quantity: item.quantity - req.body.cartItems.quantity,
-                price:
-                  req.body.cartItems.price *
-                  (item.quantity - req.body.cartItems.quantity),
+        if (item.quantity > 1) {
+          const cart = await Cart.findOneAndUpdate(
+            {
+              userId,
+              'cartItems.productId': productId,
+            },
+            {
+              $set: {
+                'cartItems.$': {
+                  ...req.body.cartItems,
+                  quantity: item.quantity - req.body.cartItems.quantity,
+                  price:
+                    req.body.cartItems.price *
+                    (item.quantity - req.body.cartItems.quantity),
+                },
               },
             },
-          },
-          { new: true },
-        )
+            { new: true },
+          )
 
-        return res.send(cart)
+          return res.send(cart)
+        } else {
+          const item = userCart.cartItems.filter((item) => {
+            return item.productId != productId
+          })
+
+          console.log(item)
+          const updatedCart = await Cart.findOneAndUpdate(
+            { userId },
+            { $set: { cartItems: item } },
+            { new: true },
+          )
+
+          res.send(updatedCart)
+        }
       } else {
         res.send('no product found, please add product first')
       }
