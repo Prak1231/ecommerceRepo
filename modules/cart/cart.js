@@ -1,42 +1,50 @@
+const { condition } = require('sequelize')
+const { update } = require('../../mongoModels/cartModel')
 const Cart = require('../../mongoModels/cartModel')
+const cartServices = require('./cartServices')
 
 //addItemToCart
+
 exports.addToCart = async (req, res, next) => {
   try {
     const userId = req.user._id
 
     const productId = req.body.cartItems.productId
 
-    const userCart = await Cart.findOne({ userId })
+    const userCart = await cartServices.findUser(userId)
 
-    // console.log(userCart.cartItems)
+    if (!userCart) {
+      console.log('hbhd')
+      const data = {
+        userId: req.user._id,
+        cartItems: [req.body.cartItems],
+      }
+      const cart = await cartServices.createCart(data)
 
+      return res.send(cart)
+    }
     if (userCart) {
+      console.log('hello')
       const item = userCart.cartItems.find((item) => {
         return item.productId == productId
       })
 
       if (item) {
         if (item.quantity < 10) {
+          const condition = { userId, 'cartItems.productId': productId }
+          const update = {
+            $set: {
+              'cartItems.$': {
+                ...req.body.cartItems,
+                quantity: item.quantity + req.body.cartItems.quantity,
+                price:
+                  req.body.cartItems.price *
+                  (item.quantity + req.body.cartItems.quantity),
+              },
+            },
+          }
           try {
-            const cart = await Cart.findOneAndUpdate(
-              {
-                userId,
-                'cartItems.productId': productId,
-              },
-              {
-                $set: {
-                  'cartItems.$': {
-                    ...req.body.cartItems,
-                    quantity: item.quantity + req.body.cartItems.quantity,
-                    price:
-                      req.body.cartItems.price *
-                      (item.quantity + req.body.cartItems.quantity),
-                  },
-                },
-              },
-              { new: true },
-            )
+            const cart = await cartServices.findCartAndUpdate(condition, update)
 
             return res.send(cart)
           } catch (err) {
@@ -47,27 +55,20 @@ exports.addToCart = async (req, res, next) => {
         }
       } else {
         try {
-          const cart = await Cart.findOneAndUpdate(
-            { userId },
-            {
-              $push: {
-                cartItems: req.body.cartItems,
-              },
+          const condition = { userId }
+          const update = {
+            $push: {
+              cartItems: req.body.cartItems,
             },
-            { new: true },
-          )
+          }
+
+          const cart = await cartServices.findCartAndUpdate(condition, update)
+
           return res.send(cart)
         } catch (err) {
           res.send(err)
         }
       }
-    } else {
-      const data = {
-        userId: req.user._id,
-        cartItems: [req.body.cartItems],
-      }
-      const cart = await Cart.create(data)
-      return res.send(cart)
     }
   } catch (error) {
     res.send(error)
@@ -82,7 +83,7 @@ exports.increaseQuantitycart = async (req, res, next) => {
 
     const productId = req.body.cartItems.productId
 
-    const userCart = await Cart.findOne({ userId })
+    const userCart = await cartServices.findUser(userId)
 
     if (userCart) {
       const item = userCart.cartItems.find((item) => {
@@ -90,24 +91,23 @@ exports.increaseQuantitycart = async (req, res, next) => {
       })
       if (item) {
         if (item.quantity < 10) {
-          const cart = await Cart.findOneAndUpdate(
-            {
-              userId,
-              'cartItems.productId': productId,
-            },
-            {
-              $set: {
-                'cartItems.$': {
-                  ...req.body.cartItems,
-                  quantity: item.quantity + req.body.cartItems.quantity,
-                  price:
-                    req.body.cartItems.price *
-                    (item.quantity + req.body.cartItems.quantity),
-                },
+          const condition = {
+            userId,
+            'cartItems.productId': productId,
+          }
+          const update = {
+            $set: {
+              'cartItems.$': {
+                ...req.body.cartItems,
+                quantity: item.quantity + req.body.cartItems.quantity,
+                price:
+                  req.body.cartItems.price *
+                  (item.quantity + req.body.cartItems.quantity),
               },
             },
-            { new: true },
-          )
+          }
+
+          const cart = await cartServices.findCartAndUpdate(condition, update)
 
           res.send(cart)
         } else {
@@ -131,7 +131,7 @@ exports.deceaseQuantitycart = async (req, res, next) => {
 
     const productId = req.body.cartItems.productId
 
-    const userCart = await Cart.findOne({ userId })
+    const userCart = await cartServices.findUser(userId)
 
     if (userCart) {
       const item = userCart.cartItems.find((item) => {
@@ -139,24 +139,22 @@ exports.deceaseQuantitycart = async (req, res, next) => {
       })
       if (item) {
         if (item.quantity > 1) {
-          const cart = await Cart.findOneAndUpdate(
-            {
-              userId,
-              'cartItems.productId': productId,
-            },
-            {
-              $set: {
-                'cartItems.$': {
-                  ...req.body.cartItems,
-                  quantity: item.quantity - req.body.cartItems.quantity,
-                  price:
-                    req.body.cartItems.price *
-                    (item.quantity - req.body.cartItems.quantity),
-                },
+          const condition = {
+            userId,
+            'cartItems.productId': productId,
+          }
+          const update = {
+            $set: {
+              'cartItems.$': {
+                ...req.body.cartItems,
+                quantity: item.quantity - req.body.cartItems.quantity,
+                price:
+                  req.body.cartItems.price *
+                  (item.quantity - req.body.cartItems.quantity),
               },
             },
-            { new: true },
-          )
+          }
+          const cart = await cartServices.findCartAndUpdate(condition, update)
 
           return res.send(cart)
         } else {
@@ -164,10 +162,11 @@ exports.deceaseQuantitycart = async (req, res, next) => {
             return item.productId != productId
           })
 
-          const updatedCart = await Cart.findOneAndUpdate(
-            { userId },
-            { $set: { cartItems: item } },
-            { new: true },
+          const condition = { userId }
+          const update = { $set: { cartItems: item } }
+          const updatedCart = await cartServices.findCartAndUpdate(
+            condition,
+            update,
           )
 
           res.send(updatedCart)
@@ -191,33 +190,40 @@ exports.deleteItem = async (req, res) => {
   const productId = req.body.productId
   console.log(productId)
 
-  const userCart = await Cart.findOne({ userId })
+  const userCart = await cartServices.findUser(userId)
 
-  if (userCart) {
-    const item = userCart.cartItems.filter((item) => {
-      return item.productId != productId
-    })
+  try {
+    if (userCart) {
+      const item = userCart.cartItems.filter((item) => {
+        return item.productId != productId
+      })
 
-    const updatedCart = await Cart.findOneAndUpdate(
-      { userId },
-      { $set: { cartItems: item } },
-      { new: true },
-    )
+      const condition = { userId }
+      const update = { $set: { cartItems: item } }
+      const updatedCart = await cartServices.findCartAndUpdate(
+        condition,
+        update,
+      )
 
-    res.send(updatedCart)
+      res.send(updatedCart)
+    }
+  } catch (error) {
+    res.send(error)
   }
 }
 
 //deleteCartItems,
 
 exports.deleteCartItems = async (req, res) => {
-  const userId = req.user._id
+  try {
+    const userId = req.user._id
 
-  const cart = await Cart.findOneAndUpdate(
-    { userId },
-    { $set: { cartItems: [] } },
-    { new: true },
-  )
+    const condition = { userId }
+    const update = { $set: { cartItems: [] } }
+    const cart = await cartServices.findCartAndUpdate(condition, update)
 
-  res.send(cart)
+    res.send(cart)
+  } catch (error) {
+    res.send(error)
+  }
 }
