@@ -18,7 +18,6 @@ exports.addToCart = async (req, res, next) => {
 
       if (item) {
         if (item.quantity < 10) {
-          console.log(item.quantity)
           try {
             const cart = await Cart.findOneAndUpdate(
               {
@@ -63,7 +62,6 @@ exports.addToCart = async (req, res, next) => {
         }
       }
     } else {
-      console.log('hello')
       const data = {
         userId: req.user._id,
         cartItems: [req.body.cartItems],
@@ -166,7 +164,6 @@ exports.deceaseQuantitycart = async (req, res, next) => {
             return item.productId != productId
           })
 
-          console.log(item)
           const updatedCart = await Cart.findOneAndUpdate(
             { userId },
             { $set: { cartItems: item } },
@@ -201,7 +198,6 @@ exports.deleteItem = async (req, res) => {
       return item.productId != productId
     })
 
-    console.log(item)
     const updatedCart = await Cart.findOneAndUpdate(
       { userId },
       { $set: { cartItems: item } },
