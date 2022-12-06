@@ -20,16 +20,16 @@ const productSchema = new Schema(
       required: true,
     },
     images: [
-       {
-        img: {type:String}
-       }
+      {
+        img: { type: String },
+      },
     ],
 
     offer: {
-      type: Number
+      type: Number,
     },
     category: {
-      type: mongoose.Schema.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
       required: true,
     },

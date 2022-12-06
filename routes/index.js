@@ -7,6 +7,7 @@ const data = require('../modules/data')
 const user = require('./user')
 const product = require('./productRoutes')
 const category = require('./categoryRoutes')
+const cart = require('./cartRoutes')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -19,5 +20,6 @@ router.post('/get_data', data.getData)
 router.use('/user', user)
 router.use('/product', product)
 router.use('/category', category)
+router.use('/cart', cart)
 
 module.exports = router

@@ -7,12 +7,14 @@ const jwt = require('jsonwebtoken')
  * @description To create access token with payload
  */
 async function generateAccessToken(payload) {
+  console.log(process.env.JWT_ACCESS_TOKEN_EXPIR)
   const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRY,
+    expiresIn: '24h',
   })
+
   return {
     accessToken: token,
-    expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRY,
+    expiresIn: '24h',
   }
 }
 
