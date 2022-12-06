@@ -1,5 +1,3 @@
-const { condition } = require('sequelize')
-const { update } = require('../../mongoModels/cartModel')
 const Cart = require('../../mongoModels/cartModel')
 const cartServices = require('./cartServices')
 
