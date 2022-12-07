@@ -1,4 +1,5 @@
-const Cart = require('../../mongoModels/cartModel')
+const messageUtil = require('../../helper/message')
+const responseUtil = require('../../helper/response')
 const cartServices = require('./cartServices')
 
 //addItemToCart
@@ -12,14 +13,14 @@ exports.addToCart = async (req, res, next) => {
     const userCart = await cartServices.findUser(userId)
 
     if (!userCart) {
-      console.log('hbhd')
       const data = {
         userId: req.user._id,
         cartItems: [req.body.cartItems],
       }
       const cart = await cartServices.createCart(data)
-
-      return res.send(cart)
+      return responseUtil.successResponse(res, messageUtil.cart.cartDetails, {
+        cart,
+      })
     }
     if (userCart) {
       console.log('hello')
@@ -44,12 +45,21 @@ exports.addToCart = async (req, res, next) => {
           try {
             const cart = await cartServices.findCartAndUpdate(condition, update)
 
-            return res.send(cart)
+            return responseUtil.successResponse(
+              res,
+              messageUtil.cart.cartDetails,
+              {
+                cart,
+              },
+            )
           } catch (err) {
-            res.send(err)
+            return responseUtil.serverErrorResponse(res, err)
           }
         } else {
-          res.send('you can not add more than 10 items')
+          return responseUtil.badRequestErrorResponse(
+            res,
+            messageUtil.cart.itemLimit,
+          )
         }
       } else {
         try {
@@ -61,15 +71,20 @@ exports.addToCart = async (req, res, next) => {
           }
 
           const cart = await cartServices.findCartAndUpdate(condition, update)
-
-          return res.send(cart)
+          return responseUtil.successResponse(
+            res,
+            messageUtil.cart.cartDetails,
+            {
+              cart,
+            },
+          )
         } catch (err) {
-          res.send(err)
+          return responseUtil.serverErrorResponse(res, err)
         }
       }
     }
-  } catch (error) {
-    res.send(error)
+  } catch (err) {
+    return responseUtil.serverErrorResponse(res, err)
   }
 }
 
@@ -107,18 +122,26 @@ exports.increaseQuantitycart = async (req, res, next) => {
 
           const cart = await cartServices.findCartAndUpdate(condition, update)
 
-          res.send(cart)
+          return responseUtil.successResponse(
+            res,
+            messageUtil.cart.QuantityIncreased,
+
+            cart,
+          )
         } else {
-          res.send('you cant add more than 10 items')
+          responseUtil.badRequestErrorResponse(res, messageUtil.cart.itemLimit)
         }
       } else {
-        res.send('no product found, please add product first')
+        responseUtil.notFoundErrorResponse(
+          res,
+          messageUtil.cart.productNotFound,
+        )
       }
     } else {
-      res.send('no user exist')
+      responseUtil.notFoundErrorResponse(res, messageUtil.cart.userNotFOund)
     }
   } catch (error) {
-    console.log(error)
+    responseUtil.serverErrorResponse(res, error)
   }
 }
 
@@ -167,13 +190,24 @@ exports.deceaseQuantitycart = async (req, res, next) => {
             update,
           )
 
-          res.send(updatedCart)
+          return responseUtil.successResponse(
+            res,
+            messageUtil.cart.Quantitydecreased,
+
+            updatedCart,
+          )
         }
       } else {
-        res.send('no product found, please add product first')
+        return responseUtil.notFoundErrorResponse(
+          res,
+          messageUtil.cart.productNotFound,
+        )
       }
     } else {
-      res.send('no user exist')
+      return responseUtil.notFoundErrorResponse(
+        res,
+        messageUtil.cart.userNotFOund,
+      )
     }
   } catch (error) {
     console.log(error)
@@ -203,10 +237,15 @@ exports.deleteItem = async (req, res) => {
         update,
       )
 
-      res.send(updatedCart)
+      return responseUtil.successResponse(
+        res,
+        messageUtil.cart.cartDetails,
+
+        updatedCart,
+      )
     }
   } catch (error) {
-    res.send(error)
+    responseUtil.serverErrorResponse(res, error)
   }
 }
 
@@ -220,8 +259,13 @@ exports.deleteCartItems = async (req, res) => {
     const update = { $set: { cartItems: [] } }
     const cart = await cartServices.findCartAndUpdate(condition, update)
 
-    res.send(cart)
+    return responseUtil.successResponse(
+      res,
+      messageUtil.cart.cartCleared,
+
+      cart,
+    )
   } catch (error) {
-    res.send(error)
+    return responseUtil.serverErrorResponse(res, error)
   }
 }

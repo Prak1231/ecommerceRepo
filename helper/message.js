@@ -20,4 +20,14 @@ module.exports = {
 
   deleteProduct: 'product deleted...',
   deleteCategory: 'deleted successfully.....',
+
+  cart: {
+    cartDetails: 'Item Added SuccessFully',
+    productNotFound: 'product not found',
+    userNotFOund: ' No user found',
+    itemLimit: 'You cant add more than 10 items',
+    QuantityIncreased: 'Quantity increased by 1',
+    Quantitydecreased: 'Quantity decreased by 1',
+    cartCleared: 'cartItesm deleted',
+  },
 }

@@ -6,7 +6,20 @@ const jwt = require('jsonwebtoken')
  * @param {*} payload
  * @description To create access token with payload
  */
-async function generateAccessToken(payload) {
+
+// async function generateAccessToken(payload) {
+//   console.log(process.env.JWT_ACCESS_TOKEN_EXPIR)
+//   const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+//     expiresIn: '24h',
+//   })
+
+//   return {
+//     accessToken: token,
+//     expiresIn: '24h',
+//   }
+// }
+
+async function generateAccessTokensh(payload) {
   console.log(process.env.JWT_ACCESS_TOKEN_EXPIR)
   const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
     expiresIn: '24h',
@@ -42,7 +55,7 @@ async function verifyAuthToken(jwtString, secretOrPublicKey) {
 }
 
 module.exports = {
-  generateAccessToken,
+  generateAccessTokensh,
   generateRefreshToken,
   verifyAuthToken,
 }

@@ -3,7 +3,7 @@ const responseUtil = require('../../helper/response')
 const userService = require('./userService')
 
 const {
-  generateAccessToken,
+  generateAccessTokensh,
   generateRefreshToken,
 } = require('../../helper/authentication')
 const auth = require('jsonwebtoken')
@@ -75,7 +75,7 @@ exports.userLogin = async (req, res, next) => {
       }
 
       console.log(payload)
-      const accessToken = await generateAccessToken(payload)
+      const accessToken = await generateAccessTokensh(payload)
       const refreshToken = await generateRefreshToken(payload)
 
       const authResponse = {}

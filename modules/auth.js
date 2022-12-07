@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../mongoModels/user')
 const responseUtil = require('../helper/response')
 const messageUtil = require('../helper/message')
-const { generateAccessToken } = require('../helper/authentication')
+const { generateAccessTokensh } = require('../helper/authentication')
 const verifyAuthToken = async (req, res, next) => {
   if (req.headers && req.headers.authorization) {
     const token = req.headers.authorization.split(' ')[1]
@@ -67,7 +67,7 @@ const generateAccessTokens = async (req, res, next) => {
       const payload = {
         userId: user._id,
       }
-      const accessToken = await generateAccessToken(payload)
+      const accessToken = await generateAccessTokensh(payload)
 
       const authResponse = {}
       authResponse.accessToken = accessToken.accessToken

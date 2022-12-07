@@ -10,7 +10,7 @@ const {
 } = require('../modules/cart/cart')
 
 router.post('/addToCart', verifyAuthToken, addToCart)
-router.get('/increaseQuantity1', verifyAuthToken, increaseQuantitycart)
+router.post('/increaseQuantity', verifyAuthToken, increaseQuantitycart)
 router.post('/decreaseQuantity1', verifyAuthToken, deceaseQuantitycart)
 router.post('/deleteItem', verifyAuthToken, deleteItem)
 router.post('/deletewholeCartItems', verifyAuthToken, deleteCartItems)
