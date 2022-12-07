@@ -176,8 +176,12 @@ exports.deceaseQuantitycart = async (req, res, next) => {
             },
           }
           const cart = await cartServices.findCartAndUpdate(condition, update)
+          return responseUtil.successResponse(
+            res,
+            messageUtil.cart.QuantityIncreased,
 
-          return res.send(cart)
+            cart,
+          )
         } else {
           const item = userCart.cartItems.filter((item) => {
             return item.productId != productId
@@ -220,7 +224,6 @@ exports.deleteItem = async (req, res) => {
   const userId = req.user._id
 
   const productId = req.body.productId
-  console.log(productId)
 
   const userCart = await cartServices.findUser(userId)
 
@@ -239,7 +242,7 @@ exports.deleteItem = async (req, res) => {
 
       return responseUtil.successResponse(
         res,
-        messageUtil.cart.cartDetails,
+        messageUtil.cart.itemDeleted,
 
         updatedCart,
       )

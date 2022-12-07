@@ -22,6 +22,7 @@ module.exports = {
   deleteCategory: 'deleted successfully.....',
 
   cart: {
+    itemDeleted: 'Item deleted..',
     cartDetails: 'Item Added SuccessFully',
     productNotFound: 'product not found',
     userNotFOund: ' No user found',
