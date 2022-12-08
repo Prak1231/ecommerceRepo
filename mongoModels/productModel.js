@@ -28,6 +28,9 @@ const productSchema = new Schema(
     offer: {
       type: Number,
     },
+    stock :{
+      type:Number,
+    },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',

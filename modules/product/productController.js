@@ -24,6 +24,7 @@ exports.addProduct = async (req, res, next) => {
       price,
       description,
       offer,
+      stock,
       category,
       status,
     } = req.body
@@ -34,6 +35,7 @@ exports.addProduct = async (req, res, next) => {
       description,
       images,
       offer,
+      stock,
       category,
       status,
     }

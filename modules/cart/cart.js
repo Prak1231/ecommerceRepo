@@ -92,16 +92,20 @@ exports.addToCart = async (req, res, next) => {
 
 exports.increaseQuantitycart = async (req, res, next) => {
   try {
+    console.log('hello')
     const userId = req.user._id
 
     const productId = req.body.cartItems.productId
+    console.log(productId)
 
     const userCart = await cartServices.findUser(userId)
+    console.log(userCart)
 
     if (userCart) {
       const item = userCart.cartItems.find((item) => {
         return item.productId == productId
       })
+      console.log(item)
       if (item) {
         if (item.quantity < 10) {
           const condition = {
@@ -132,13 +136,13 @@ exports.increaseQuantitycart = async (req, res, next) => {
           responseUtil.badRequestErrorResponse(res, messageUtil.cart.itemLimit)
         }
       } else {
-        responseUtil.notFoundErrorResponse(
+        responseUtil.badRequestErrorResponse(
           res,
           messageUtil.cart.productNotFound,
         )
       }
     } else {
-      responseUtil.notFoundErrorResponse(res, messageUtil.cart.userNotFOund)
+      responseUtil.badRequestErrorResponse(res, messageUtil.cart.userNotFOund)
     }
   } catch (error) {
     responseUtil.serverErrorResponse(res, error)
@@ -202,13 +206,13 @@ exports.deceaseQuantitycart = async (req, res, next) => {
           )
         }
       } else {
-        return responseUtil.notFoundErrorResponse(
+        return responseUtil.badRequestErrorResponse(
           res,
           messageUtil.cart.productNotFound,
         )
       }
     } else {
-      return responseUtil.notFoundErrorResponse(
+      return responseUtil.badRequestErrorResponse(
         res,
         messageUtil.cart.userNotFOund,
       )
