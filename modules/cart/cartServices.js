@@ -12,3 +12,7 @@ exports.findCartAndUpdate = async (condition, update) => {
 exports.createCart = async (data) => {
   return await Cart.create(data)
 }
+
+exports.deleteCart = async (userId) => {
+  return await Cart.findOneAndRemove(userId)
+}

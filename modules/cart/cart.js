@@ -6,7 +6,7 @@ const cartServices = require('./cartServices')
 
 exports.addToCart = async (req, res, next) => {
   try {
-    const userId = req.user._id
+    const userId = req.body.userId
 
     const productId = req.body.cartItems.productId
 
@@ -14,7 +14,7 @@ exports.addToCart = async (req, res, next) => {
 
     if (!userCart) {
       const data = {
-        userId: req.user._id,
+        userId: req.body.userId,
         cartItems: [req.body.cartItems],
       }
       const cart = await cartServices.createCart(data)
@@ -93,7 +93,7 @@ exports.addToCart = async (req, res, next) => {
 exports.increaseQuantitycart = async (req, res, next) => {
   try {
     console.log('hello')
-    const userId = req.user._id
+    const userId = req.body.userId
 
     const productId = req.body.cartItems.productId
     console.log(productId)
@@ -152,7 +152,7 @@ exports.increaseQuantitycart = async (req, res, next) => {
 //decreaseQuantitybyOne
 exports.deceaseQuantitycart = async (req, res, next) => {
   try {
-    const userId = req.user._id
+    const userId = req.body.userId
 
     const productId = req.body.cartItems.productId
 
@@ -225,7 +225,7 @@ exports.deceaseQuantitycart = async (req, res, next) => {
 //deleteSpecific Item
 
 exports.deleteItem = async (req, res) => {
-  const userId = req.user._id
+  const userId = req.body.userId
 
   const productId = req.body.productId
 
@@ -233,23 +233,41 @@ exports.deleteItem = async (req, res) => {
 
   try {
     if (userCart) {
-      const item = userCart.cartItems.filter((item) => {
-        return item.productId != productId
-      })
+      if (productId) {
+        const product = userCart.cartItems.find((item) => {
+          return item.productId == productId
+        })
 
-      const condition = { userId }
-      const update = { $set: { cartItems: item } }
-      const updatedCart = await cartServices.findCartAndUpdate(
-        condition,
-        update,
-      )
+        if (product) {
+          const item = userCart.cartItems.filter((item) => {
+            return item.productId != productId
+          })
 
-      return responseUtil.successResponse(
-        res,
-        messageUtil.cart.itemDeleted,
+          const condition = { userId }
+          const update = { $set: { cartItems: item } }
+          const updatedCart = await cartServices.findCartAndUpdate(
+            condition,
+            update,
+          )
 
-        updatedCart,
-      )
+          return responseUtil.successResponse(
+            res,
+            messageUtil.cart.itemDeleted,
+
+            updatedCart,
+          )
+        } else {
+          return responseUtil.badRequestErrorResponse(
+            res,
+            messageUtil.cart.productNotFound,
+          )
+        }
+      } else {
+        return responseUtil.badRequestErrorResponse(
+          res,
+          messageUtil.cart.invalidProductId,
+        )
+      }
     }
   } catch (error) {
     responseUtil.serverErrorResponse(res, error)
@@ -258,20 +276,13 @@ exports.deleteItem = async (req, res) => {
 
 //deleteCartItems,
 
-exports.deleteCartItems = async (req, res) => {
+exports.clearCart = async (req, res) => {
   try {
-    const userId = req.user._id
+    const userId = req.body.userId
 
-    const condition = { userId }
-    const update = { $set: { cartItems: [] } }
-    const cart = await cartServices.findCartAndUpdate(condition, update)
+    const cart = await cartServices.deleteCart({ userId })
 
-    return responseUtil.successResponse(
-      res,
-      messageUtil.cart.cartCleared,
-
-      cart,
-    )
+    return responseUtil.successResponse(res, messageUtil.cart.cartCleared)
   } catch (error) {
     return responseUtil.serverErrorResponse(res, error)
   }

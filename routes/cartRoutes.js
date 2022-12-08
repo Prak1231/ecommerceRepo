@@ -6,13 +6,13 @@ const {
   increaseQuantitycart,
   deceaseQuantitycart,
   deleteItem,
-  deleteCartItems,
+  clearCart,
 } = require('../modules/cart/cart')
 
-router.post('/addToCart', verifyAuthToken, addToCart)
-router.post('/increaseQuantity', verifyAuthToken, increaseQuantitycart)
-router.post('/decreaseQuantity1', verifyAuthToken, deceaseQuantitycart)
-router.post('/deleteItem', verifyAuthToken, deleteItem)
-router.post('/deletewholeCartItems', verifyAuthToken, deleteCartItems)
+router.post('/addToCart', addToCart)
+router.post('/increaseQuantity', increaseQuantitycart)
+router.post('/decreaseQuantity1', deceaseQuantitycart)
+router.post('/deleteItem', deleteItem)
+router.post('/clearCart', clearCart)
 
 module.exports = router

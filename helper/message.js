@@ -29,6 +29,7 @@ module.exports = {
     itemLimit: 'You cant add more than 10 items',
     QuantityIncreased: 'Quantity increased by 1',
     Quantitydecreased: 'Quantity decreased by 1',
-    cartCleared: 'cartItesm deleted',
+    cartCleared: 'cart deleted.....',
+    invalidProductId: 'invalid ProductId',
   },
 }
