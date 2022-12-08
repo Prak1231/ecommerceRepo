@@ -1,5 +1,4 @@
 const express = require('express')
-const { verifyAuthToken } = require('../modules/auth')
 const router = express.Router()
 const {
   addToCart,

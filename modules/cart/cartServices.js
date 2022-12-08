@@ -5,7 +5,6 @@ exports.findUser = async (userId) => {
 }
 
 exports.findCartAndUpdate = async (condition, update) => {
-  console.log('update services')
   return await Cart.findOneAndUpdate(condition, update, { new: true })
 }
 

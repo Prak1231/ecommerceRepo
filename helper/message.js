@@ -26,10 +26,21 @@ module.exports = {
     cartDetails: 'Item Added SuccessFully',
     productNotFound: 'product not found',
     userNotFOund: ' No user found',
-    itemLimit: 'You cant add more than 10 items',
+    itemLimit: 'You cant add more product',
     QuantityIncreased: 'Quantity increased by 1',
     Quantitydecreased: 'Quantity decreased by 1',
     cartCleared: 'cart deleted.....',
     invalidProductId: 'invalid ProductId',
+    itemStock: 'Currently this product is not in the stock',
+  },
+
+  order: {
+    orderPlaced: 'Your order placed successfully',
+    addItems: 'If you want place order again then add items',
+    orderId: 'Please enter order Id',
+    noOrder: 'No order found',
+    orderDeleted: 'Order deleted..',
+    noUser: 'user not found',
+    delivered: 'Order delivered successfully',
   },
 }

@@ -8,6 +8,7 @@ const user = require('./user')
 const product = require('./productRoutes')
 const category = require('./categoryRoutes')
 const cart = require('./cartRoutes')
+const order = require('./orderRoutes')
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -21,5 +22,6 @@ router.use('/user', user)
 router.use('/product', product)
 router.use('/category', category)
 router.use('/cart', cart)
+router.use('/order', order)
 
 module.exports = router

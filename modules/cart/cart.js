@@ -1,6 +1,7 @@
 const messageUtil = require('../../helper/message')
 const responseUtil = require('../../helper/response')
 const cartServices = require('./cartServices')
+const Product = require('../../mongoModels/productModel')
 
 //addItemToCart
 
@@ -9,6 +10,8 @@ exports.addToCart = async (req, res, next) => {
     const userId = req.body.userId
 
     const productId = req.body.cartItems.productId
+
+    const product = await Product.findById(productId)
 
     const userCart = await cartServices.findUser(userId)
 
@@ -29,7 +32,7 @@ exports.addToCart = async (req, res, next) => {
       })
 
       if (item) {
-        if (item.quantity < 10) {
+        if (item.quantity < product.stock) {
           const condition = { userId, 'cartItems.productId': productId }
           const update = {
             $set: {
@@ -69,15 +72,21 @@ exports.addToCart = async (req, res, next) => {
               cartItems: req.body.cartItems,
             },
           }
-
-          const cart = await cartServices.findCartAndUpdate(condition, update)
-          return responseUtil.successResponse(
-            res,
-            messageUtil.cart.cartDetails,
-            {
-              cart,
-            },
-          )
+          if (req.body.cartItems.quantity < product.stock) {
+            const cart = await cartServices.findCartAndUpdate(condition, update)
+            return responseUtil.successResponse(
+              res,
+              messageUtil.cart.cartDetails,
+              {
+                cart,
+              },
+            )
+          } else {
+            responseUtil.badRequestErrorResponse(
+              res,
+              messageUtil.cart.itemStock,
+            )
+          }
         } catch (err) {
           return responseUtil.serverErrorResponse(res, err)
         }
@@ -96,10 +105,10 @@ exports.increaseQuantitycart = async (req, res, next) => {
     const userId = req.body.userId
 
     const productId = req.body.cartItems.productId
-    console.log(productId)
+
+    const product = await Product.findById(productId)
 
     const userCart = await cartServices.findUser(userId)
-    console.log(userCart)
 
     if (userCart) {
       const item = userCart.cartItems.find((item) => {
@@ -107,7 +116,7 @@ exports.increaseQuantitycart = async (req, res, next) => {
       })
       console.log(item)
       if (item) {
-        if (item.quantity < 10) {
+        if (item.quantity < product.stock) {
           const condition = {
             userId,
             'cartItems.productId': productId,
@@ -182,7 +191,7 @@ exports.deceaseQuantitycart = async (req, res, next) => {
           const cart = await cartServices.findCartAndUpdate(condition, update)
           return responseUtil.successResponse(
             res,
-            messageUtil.cart.QuantityIncreased,
+            messageUtil.cart.Quantitydecreased,
 
             cart,
           )
@@ -281,8 +290,14 @@ exports.clearCart = async (req, res) => {
     const userId = req.body.userId
 
     const cart = await cartServices.deleteCart({ userId })
-
-    return responseUtil.successResponse(res, messageUtil.cart.cartCleared)
+    if (cart) {
+      return responseUtil.successResponse(res, messageUtil.cart.cartCleared)
+    } else {
+      return responseUtil.badRequestErrorResponse(
+        res,
+        messageUtil.cart.userNotFOund,
+      )
+    }
   } catch (error) {
     return responseUtil.serverErrorResponse(res, error)
   }
