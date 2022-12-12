@@ -1,6 +1,7 @@
 const orderServices = require('./orderServices')
 const messageUtil = require('../../helper/message')
 const responseUtil = require('../../helper/response')
+const message = require('../../helper/message')
 
 exports.createNewOrder = async (req, res) => {
   try {
@@ -138,4 +139,20 @@ async function updateStock(id, quantity) {
   const product = await orderServices.findProduct(id)
   product.stock -= quantity
   await product.save({ validateBeforeSave: false })
+}
+
+///getAllOrder -Admin
+
+exports.getAllOrders = async (req, res) => {
+  try {
+    const orders = await orderServices.findAllOrders()
+
+    return responseUtil.successResponse(
+      res,
+      messageUtil.order.allOrders,
+      orders,
+    )
+  } catch (err) {
+    responseUtil.serverErrorResponse(res, err)
+  }
 }

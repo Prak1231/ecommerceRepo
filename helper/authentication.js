@@ -22,12 +22,12 @@ const jwt = require('jsonwebtoken')
 async function generateAccessTokensh(payload) {
   console.log(process.env.JWT_ACCESS_TOKEN_EXPIR)
   const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-    expiresIn: '24h',
+    expiresIn: `${process.env.JWT_ACCESS_TOKEN_EXPIRY}s`,
   })
 
   return {
     accessToken: token,
-    expiresIn: '24h',
+    expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRY,
   }
 }
 
@@ -37,7 +37,7 @@ async function generateAccessTokensh(payload) {
  */
 async function generateRefreshToken(payload) {
   const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRY,
+    expiresIn: `${process.env.JWT_REFRESH_TOKEN_EXPIRY}s`,
   })
   return {
     refreshToken: token,

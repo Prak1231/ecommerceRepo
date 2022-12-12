@@ -4,6 +4,7 @@ const {
   deleteSingleOrder,
   deleteUserOders,
   updateOrderStatus,
+  getAllOrders,
 } = require('../modules/Orders/order')
 const { isAdminAuth, verifyAuthToken } = require('../modules/auth')
 
@@ -18,5 +19,7 @@ router.post(
   isAdminAuth,
   updateOrderStatus,
 )
+
+router.post('/getAllOrders', verifyAuthToken, isAdminAuth, getAllOrders)
 
 module.exports = router

@@ -29,3 +29,7 @@ exports.findOrder = async (orderId) => {
 exports.findProduct = async (id) => {
   return await Product.findById(id)
 }
+
+exports.findAllOrders = async () => {
+  return await Order.find()
+}

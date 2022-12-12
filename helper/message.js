@@ -42,5 +42,6 @@ module.exports = {
     orderDeleted: 'Order deleted..',
     noUser: 'user not found',
     delivered: 'Order delivered successfully',
+    allOrders: 'All orders..',
   },
 }
